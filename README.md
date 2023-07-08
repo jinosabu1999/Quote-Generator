@@ -1,4 +1,4 @@
-# QuoteGenerator
+# Quote Generator
 QUOTE GENERATOR:
 This repository contains a simple web application for generating random quotes. The application is built using HTML, CSS, and JavaScript.
 
