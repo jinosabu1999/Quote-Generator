@@ -1,0 +1,17 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting: Hey there! 😄👋 Just wanted to pop in and say a big THANK YOU for sponsoring my GitHub repository! 🎉 Your support means the world to me and I'm super grateful for your generosity. 🙏💖 It's awesome to have people like you cheering me on in this coding journey! Keep being amazing and let's continue rocking the open-source community together! 🚀🌟 #GitHubSquad 
+    
+  runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Message that will be displayed on users' first issue"
+        pr-message: "Message that will be displayed on users' first pull request"
