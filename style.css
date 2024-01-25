@@ -17,7 +17,7 @@ h1 {
 }
 
 #quote {
-  background: #fff;
+  background: black;
   border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   font-size: 24px;
@@ -26,8 +26,8 @@ h1 {
   padding: 30px;
   line-height: 1.5;
   animation: fadeIn 1s ease-in-out;
-  color: #f50000;
-  width: 85%;
+  color: white;
+  width: 80%;
 }
 
 #new-quote {
