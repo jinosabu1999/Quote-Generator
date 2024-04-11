@@ -2,82 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RANDOM QUOTE GENERATOR</title>
+    <title>Quote Generator</title>
     <style>
         body {
-          background: linear-gradient(to right, #1a237e, #00bcd4);
-          color: #fff;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          margin: 0;
-          padding: 0;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a237e;
+            background-image: radial-gradient(circle, #283593 0%, #1a237e 100%);
+            color: #fff;
         }
-        
+
         .container {
-          text-align: center;
-          margin-top: 100px;
+            text-align: center;
+            max-width: 80%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        
+
         h1 {
-          font-size: 36px;
-          margin-bottom: 30px;
+            font-size: 3rem;
+            margin-bottom: 2rem;
         }
-        
+
         #quote {
-          background: black;
-          border-radius: 10px;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-          font-size: 24px;
-          margin: 30px auto;
-          max-width: 600px;
-          padding: 30px;
-          line-height: 1.5;
-          animation: fadeIn 1s ease-in-out;
-          color: white;
-          width: 80%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 30px;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
         }
-        
+
         #new-quote {
-          background: #040196;
-          border: none;
-          border-radius: 30px;
-          color: #e9e1e1;
-          cursor: pointer;
-          font-size: 18px;
-          padding: 15px 30px;
-          transition: background-color 0.3s;
-          animation: pulse 2s infinite;
+            background: black;
+            border: none;
+            border-radius: 30px;
+            color: yellow;
+            cursor: pointer;
+            font-size: 1.4rem;
+            padding: 15px 30px;
+            transition: background-color 0.3s;
         }
-        
-        #new-quote:hover {
-          background: #181717;
-        }
-        
+
         @keyframes fadeIn {
-          0% { opacity: 0; transform: translateY(-50px); }
-          100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-        
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-          100% { transform: scale(1); }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Random Quote Generator</h1>
-        <div id="quote"></div>
+        <h1>Quote Generator</h1>
+        <div id="quote">Click the button below to generate a random quote.</div>
         <button id="new-quote">New Quote</button>
     </div>
+
     <script>
         // Function to fetch a random quote from the Quotable API
         async function fetchRandomQuote() {
-            const response = await fetch("https://api.quotable.io/random");
-            const data = await response.json();
-            return data.content;
+            try {
+                const response = await fetch("https://api.quotable.io/random");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                return data.content;
+            } catch (error) {
+                console.error('Error fetching quote:', error);
+                return "Sorry, something went wrong. Please try again later.";
+            }
         }
 
         // Function to display a random quote
@@ -86,11 +92,11 @@
             quoteElement.textContent = await fetchRandomQuote();
         }
 
-        // Display a random quote when the page loads
-        document.addEventListener("DOMContentLoaded", displayRandomQuote);
-
         // Event listener for the "New Quote" button
         document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
+
+        // Display a random quote when the page loads
+        displayRandomQuote();
     </script>
 </body>
 </html>
