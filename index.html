@@ -5,13 +5,92 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RANDOM QUOTE GENERATOR</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+          background: linear-gradient(to right, #1a237e, #00bcd4);
+          color: #fff;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        
+        .container {
+          text-align: center;
+          margin-top: 100px;
+        }
+        
+        h1 {
+          font-size: 36px;
+          margin-bottom: 30px;
+        }
+        
+        #quote {
+          background: black;
+          border-radius: 10px;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          font-size: 24px;
+          margin: 30px auto;
+          max-width: 600px;
+          padding: 30px;
+          line-height: 1.5;
+          animation: fadeIn 1s ease-in-out;
+          color: white;
+          width: 80%;
+        }
+        
+        #new-quote {
+          background: #040196;
+          border: none;
+          border-radius: 30px;
+          color: #e9e1e1;
+          cursor: pointer;
+          font-size: 18px;
+          padding: 15px 30px;
+          transition: background-color 0.3s;
+          animation: pulse 2s infinite;
+        }
+        
+        #new-quote:hover {
+          background: #181717;
+        }
+        
+        @keyframes fadeIn {
+          0% { opacity: 0; transform: translateY(-50px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <h1>Random Quote Generator</h1>
         <div id="quote"></div>
         <button id="new-quote">New Quote</button>
-      </div>
-          <script src="script.js"></script>
+    </div>
+    <script>
+        // Function to fetch a random quote from the Quotable API
+        async function fetchRandomQuote() {
+            const response = await fetch("https://api.quotable.io/random");
+            const data = await response.json();
+            return data.content;
+        }
+
+        // Function to display a random quote
+        async function displayRandomQuote() {
+            const quoteElement = document.getElementById("quote");
+            quoteElement.textContent = await fetchRandomQuote();
+        }
+
+        // Display a random quote when the page loads
+        document.addEventListener("DOMContentLoaded", displayRandomQuote);
+
+        // Event listener for the "New Quote" button
+        document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
+    </script>
 </body>
 </html>
