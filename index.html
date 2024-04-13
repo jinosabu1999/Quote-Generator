@@ -1,102 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quote Generator</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #1a237e;
-            background-image: radial-gradient(circle, #283593 0%, #1a237e 100%);
-            color: #fff;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quote Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6C63FF, #9F44D3);
+      color: #ffffff;
+    }
 
-        .container {
-            text-align: center;
-            max-width: 80%;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
+    .container {
+      text-align: center;
+      max-width: 80%;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-        }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
 
-        #quote {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 30px;
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            line-height: 1.5;
-        }
+    #quote {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      padding: 30px;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+      animation: fadeIn 0.5s ease-in-out;
+    }
 
-        #new-quote {
-            background: black;
-            border: none;
-            border-radius: 30px;
-            color: yellow;
-            cursor: pointer;
-            font-size: 1.4rem;
-            padding: 15px 30px;
-            transition: background-color 0.3s;
-        }
+    #new-quote {
+      background-color: #ffffff;
+      border: none;
+      border-radius: 30px;
+      color: #6C63FF;
+      cursor: pointer;
+      font-size: 1.4rem;
+      font-weight: 600;
+      padding: 15px 30px;
+      transition: transform 0.3s ease-in-out;
+    }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-50px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+    #new-quote:hover {
+      transform: scale(1.1);
+    }
 
-        @media (max-width: 768px) {
-            .container {
-                max-width: 90%;
-            }
-        }
-    </style>
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        max-width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Quote Generator</h1>
-        <div id="quote">Click the button below to generate a random quote.</div>
-        <button id="new-quote">New Quote</button>
-    </div>
+  <div class="container">
+    <h1>Quote Generator</h1>
+    <div id="quote">Click the button below to generate a random quote.</div>
+    <button id="new-quote">New Quote</button>
+  </div>
 
-    <script>
-        // Function to fetch a random quote from the Quotable API
-        async function fetchRandomQuote() {
-            try {
-                const response = await fetch("https://api.quotable.io/random");
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                return data.content;
-            } catch (error) {
-                console.error('Error fetching quote:', error);
-                return "Sorry, something went wrong. Please try again later.";
-            }
+  <script>
+    // Function to fetch a random quote from the Quotable API
+    async function fetchRandomQuote() {
+      try {
+        const response = await fetch("https://api.quotable.io/random");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
+        const data = await response.json();
+        return data.content;
+      } catch (error) {
+        console.error('Error fetching quote:', error);
+        return "Sorry, something went wrong. Please try again later.";
+      }
+    }
 
-        // Function to display a random quote
-        async function displayRandomQuote() {
-            const quoteElement = document.getElementById("quote");
-            quoteElement.textContent = await fetchRandomQuote();
-        }
+    // Function to display a random quote
+    async function displayRandomQuote() {
+      const quoteElement = document.getElementById("quote");
+      quoteElement.textContent = await fetchRandomQuote();
+    }
 
-        // Event listener for the "New Quote" button
-        document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
+    // Event listener for the "New Quote" button
+    document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
 
-        // Display a random quote when the page loads
-        displayRandomQuote();
-    </script>
+    // Display a random quote when the page loads
+    displayRandomQuote();
+  </script>
 </body>
 </html>
