@@ -51,10 +51,16 @@
       margin: 0;
     }
 
-    #copy-quote {
+    #author {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #f0f0f0;
+      font-style: italic;
+    }
+
+    #copy-quote, #favorite-quote {
       position: absolute;
       top: 10px;
-      right: 10px;
       background: none;
       border: none;
       cursor: pointer;
@@ -63,7 +69,15 @@
       transition: transform 0.3s ease-in-out;
     }
 
-    #copy-quote:hover {
+    #copy-quote {
+      right: 40px;
+    }
+
+    #favorite-quote {
+      right: 10px;
+    }
+
+    #copy-quote:hover, #favorite-quote:hover {
       transform: scale(1.2);
     }
 
@@ -89,6 +103,16 @@
       transform: scale(1.1);
     }
 
+    #favorites-container {
+      display: none;
+      margin-top: 2rem;
+    }
+
+    #favorites-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(-50px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -111,6 +135,7 @@
     <h1>Quote Generator</h1>
     <div id="quote-container">
       <p id="quote">Click the button below to generate a random quote.</p>
+      <p id="author"></p>
       <button id="copy-quote" aria-label="Copy Quote">
         <!-- SVG icon for copy button -->
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
@@ -118,9 +143,21 @@
           <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
         </svg>
       </button>
+      <button id="favorite-quote" aria-label="Favorite Quote">
+        <!-- SVG icon for favorite button -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </button>
     </div>
     <div class="button-container">
       <button id="new-quote" class="button">New Quote</button>
+      <button id="view-favorites" class="button">View Favorites</button>
+    </div>
+    <div id="favorites-container">
+      <h2>Favorites</h2>
+      <ul id="favorites-list"></ul>
     </div>
   </div>
 
@@ -133,17 +170,20 @@
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        return data.content;
+        return { content: data.content, author: data.author };
       } catch (error) {
         console.error('Error fetching quote:', error);
-        return "Sorry, something went wrong. Please try again later.";
+        return { content: "Sorry, something went wrong. Please try again later.", author: "" };
       }
     }
 
     // Function to display a random quote
     async function displayRandomQuote() {
       const quoteElement = document.getElementById("quote");
-      quoteElement.textContent = await fetchRandomQuote();
+      const authorElement = document.getElementById("author");
+      const quoteData = await fetchRandomQuote();
+      quoteElement.textContent = quoteData.content;
+      authorElement.textContent = `— ${quoteData.author}`;
     }
 
     // Function to copy the quote to the clipboard
@@ -156,9 +196,35 @@
       });
     }
 
+    // Function to save a quote to favorites
+    function saveQuoteToFavorites() {
+      const quoteText = document.getElementById("quote").textContent;
+      const authorText = document.getElementById("author").textContent;
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      favorites.push({ quote: quoteText, author: authorText });
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      alert("Quote added to favorites!");
+    }
+
+    // Function to display favorite quotes
+    function displayFavorites() {
+      const favoritesContainer = document.getElementById("favorites-container");
+      const favoritesList = document.getElementById("favorites-list");
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      favoritesList.innerHTML = '';
+      favorites.forEach(favorite => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${favorite.quote} ${favorite.author}`;
+        favoritesList.appendChild(listItem);
+      });
+      favoritesContainer.style.display = 'block';
+    }
+
     // Event listeners for the buttons
     document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
     document.getElementById("copy-quote").addEventListener("click", copyQuoteToClipboard);
+    document.getElementById("favorite-quote").addEventListener("click", saveQuoteToFavorites);
+    document.getElementById("view-favorites").addEventListener("click", displayFavorites);
 
     // Display a random quote when the page loads
     displayRandomQuote();
