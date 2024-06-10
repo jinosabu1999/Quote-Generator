@@ -36,7 +36,8 @@
       font-weight: 600;
     }
 
-    #quote {
+    #quote-container {
+      position: relative;
       background-color: rgba(0, 0, 0, 0.2);
       border-radius: 10px;
       padding: 30px;
@@ -46,7 +47,33 @@
       animation: fadeIn 0.5s ease-in-out;
     }
 
-    #new-quote {
+    #quote {
+      margin: 0;
+    }
+
+    #copy-quote {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    #copy-quote:hover {
+      transform: scale(1.2);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .button {
       background-color: #ffffff;
       border: none;
       border-radius: 30px;
@@ -58,7 +85,7 @@
       transition: transform 0.3s ease-in-out;
     }
 
-    #new-quote:hover {
+    .button:hover {
       transform: scale(1.1);
     }
 
@@ -71,14 +98,30 @@
       .container {
         max-width: 90%;
       }
+
+      .button-container {
+        flex-direction: column;
+        gap: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Quote Generator</h1>
-    <div id="quote">Click the button below to generate a random quote.</div>
-    <button id="new-quote">New Quote</button>
+    <div id="quote-container">
+      <p id="quote">Click the button below to generate a random quote.</p>
+      <button id="copy-quote" aria-label="Copy Quote">
+        <!-- SVG icon for copy button -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="button-container">
+      <button id="new-quote" class="button">New Quote</button>
+    </div>
   </div>
 
   <script>
@@ -103,8 +146,19 @@
       quoteElement.textContent = await fetchRandomQuote();
     }
 
-    // Event listener for the "New Quote" button
+    // Function to copy the quote to the clipboard
+    function copyQuoteToClipboard() {
+      const quoteText = document.getElementById("quote").textContent;
+      navigator.clipboard.writeText(quoteText).then(() => {
+        alert("Quote copied to clipboard!");
+      }).catch(err => {
+        console.error('Error copying text: ', err);
+      });
+    }
+
+    // Event listeners for the buttons
     document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
+    document.getElementById("copy-quote").addEventListener("click", copyQuoteToClipboard);
 
     // Display a random quote when the page loads
     displayRandomQuote();
