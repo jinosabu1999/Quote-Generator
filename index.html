@@ -58,7 +58,7 @@
       font-style: italic;
     }
 
-    #copy-quote, #favorite-quote {
+    #copy-quote, #favorite-quote, #share-quote, #play-quote {
       position: absolute;
       top: 10px;
       background: none;
@@ -69,15 +69,12 @@
       transition: transform 0.3s ease-in-out;
     }
 
-    #copy-quote {
-      right: 40px;
-    }
+    #play-quote { right: 100px; }
+    #copy-quote { right: 70px; }
+    #favorite-quote { right: 40px; }
+    #share-quote { right: 10px; }
 
-    #favorite-quote {
-      right: 10px;
-    }
-
-    #copy-quote:hover, #favorite-quote:hover {
+    #copy-quote:hover, #favorite-quote:hover, #share-quote:hover, #play-quote:hover {
       transform: scale(1.2);
     }
 
@@ -150,6 +147,25 @@
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
       </button>
+      <button id="share-quote" aria-label="Share Quote">
+        <!-- New modern SVG icon for share button -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M14 9V5l7 7-7 7v-4H6v-6h8zM2 3h2v18H2V3z"/>
+        </svg>
+      </button>
+      <button id="play-quote" aria-label="Play Quote">
+        <!-- SVG icon for play button -->
+        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28px" height="28px">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <!-- SVG icon for pause button, initially hidden -->
+        <svg id="pause-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28px" height="28px">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+      </button>
     </div>
     <div class="button-container">
       <button id="new-quote" class="button">New Quote</button>
@@ -162,6 +178,8 @@
   </div>
 
   <script>
+    let speechSynthesisUtterance = null;
+
     // Function to fetch a random quote from the Quotable API
     async function fetchRandomQuote() {
       try {
@@ -177,13 +195,15 @@
       }
     }
 
-    // Function to display a random quote
+// Function to display a random quote
     async function displayRandomQuote() {
       const quoteElement = document.getElementById("quote");
       const authorElement = document.getElementById("author");
       const quoteData = await fetchRandomQuote();
       quoteElement.textContent = quoteData.content;
       authorElement.textContent = `— ${quoteData.author}`;
+      stopSpeaking();
+      updatePlayPauseButton();
     }
 
     // Function to copy the quote to the clipboard
@@ -220,14 +240,76 @@
       favoritesContainer.style.display = 'block';
     }
 
+    // Function to share the quote using the Web Share API
+    function shareQuote() {
+      const quoteText = document.getElementById("quote").textContent;
+      const authorText = document.getElementById("author").textContent;
+      const shareData = {
+        title: 'Quote',
+        text: `${quoteText} ${authorText}`,
+        url: document.location.href
+      };
+      if (navigator.share) {
+        navigator.share(shareData).then(() => {
+          console.log('Quote shared successfully');
+        }).catch(err => {
+          console.error('Error sharing quote:', err);
+        });
+      } else {
+        alert('Share feature is not supported on this browser.');
+      }
+    }
+
+    // Function to start speaking the quote
+    function startSpeaking() {
+      const quoteText = document.getElementById("quote").textContent;
+      const authorText = document.getElementById("author").textContent;
+      const speechText = `${quoteText} by ${authorText}`;
+      speechSynthesisUtterance = new SpeechSynthesisUtterance(speechText);
+      window.speechSynthesis.speak(speechSynthesisUtterance);
+    }
+
+    // Function to stop speaking the quote
+    function stopSpeaking() {
+      if (speechSynthesisUtterance) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    // Function to update the play/pause button icon
+    function updatePlayPauseButton() {
+      const playIcon = document.getElementById("play-icon");
+      const pauseIcon = document.getElementById("pause-icon");
+      if (window.speechSynthesis.speaking) {
+        playIcon.style.display = "none";
+        pauseIcon.style.display = "block";
+      } else {
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+      }
+    }
+
     // Event listeners for the buttons
     document.getElementById("new-quote").addEventListener("click", displayRandomQuote);
     document.getElementById("copy-quote").addEventListener("click", copyQuoteToClipboard);
     document.getElementById("favorite-quote").addEventListener("click", saveQuoteToFavorites);
     document.getElementById("view-favorites").addEventListener("click", displayFavorites);
+    document.getElementById("share-quote").addEventListener("click", shareQuote);
+    document.getElementById("play-quote").addEventListener("click", () => {
+      if (window.speechSynthesis.speaking) {
+        stopSpeaking();
+      } else {
+        startSpeaking();
+      }
+      updatePlayPauseButton();
+    });
 
     // Display a random quote when the page loads
     displayRandomQuote();
+
+    // Update the play/pause button icon when the speech synthesis state changes
+    window.speechSynthesis.addEventListener('voiceschanged', updatePlayPauseButton);
+    window.speechSynthesis.addEventListener('end', updatePlayPauseButton);
   </script>
 </body>
 </html>
