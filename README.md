@@ -45,6 +45,6 @@ Contributions are welcome! Feel free to submit a pull request or open an issue o
 
 ## Contact
 
-For questions or suggestions, please contact [your-email@example.com].
+For questions or suggestions, please contact [jinosabu3@gmail.com].
 
 Enjoy your quotes!
