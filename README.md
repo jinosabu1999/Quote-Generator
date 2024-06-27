@@ -26,7 +26,7 @@ Welcome to the Quote Generator! This simple web app allows you to generate, shar
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/quote-generator.git
+   git clone https://github.com/jinosabu1999/quote-generator.git
    ```
 2. Open `index.html` in your preferred web browser.
 
