@@ -79,6 +79,10 @@
     #copy-quote,#favorite-quote,#share-quote, #play-quote {
       font-size: 1.5rem;
       margin-right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
     }
     .button:hover {
       background-color: yellow;
@@ -200,11 +204,22 @@
     // Function to copy the quote to the clipboard
     function copyQuoteToClipboard() {
       const quoteText = document.getElementById("quote").textContent;
-      navigator.clipboard.writeText(quoteText).then(() => {
-        alert("Quote copied to clipboard!");
-      }).catch(err => {
-        console.error('Error copying text: ', err);
-      });
+      const authorText = document.getElementById("author").textContent;
+      const fullQuote = `${quoteText} ${authorText}`;
+      
+      // Create a temporary textarea element to hold the text
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = fullQuote;
+      document.body.appendChild(tempTextArea);
+      
+      // Select and copy the text
+      tempTextArea.select();
+      document.execCommand("copy");
+      
+      // Remove the temporary textarea
+      document.body.removeChild(tempTextArea);
+      
+      alert("Quote copied to clipboard!");
     }
 
     // Function to save a quote to favorites
@@ -261,6 +276,7 @@
       speechSynthesisUtterance.onend = () => {
         updatePlayPauseButton();
       };
+      updatePlayPauseButton();
     }
 
     // Function to stop speaking the quote
@@ -268,18 +284,18 @@
       if (speechSynthesisUtterance) {
         window.speechSynthesis.cancel();
       }
+      updatePlayPauseButton();
     }
 
     // Function to update the play/pause button icon
     function updatePlayPauseButton() {
-      const playIcon = document.getElementById("play-icon");
-      const pauseIcon = document.getElementById("pause-icon");
+      const playQuoteButton = document.getElementById("play-quote");
       if (window.speechSynthesis.speaking) {
-        playIcon.style.display = "none";
-        pauseIcon.style.display = "block";
+        playQuoteButton.textContent = "⏸️";
+        playQuoteButton.setAttribute("aria-label", "Pause Quote");
       } else {
-        playIcon.style.display = "block";
-        pauseIcon.style.display = "none";
+        playQuoteButton.textContent = "▶️";
+        playQuoteButton.setAttribute("aria-label", "Play Quote");
       }
     }
 
